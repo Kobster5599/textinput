@@ -8,10 +8,14 @@ export default function App() {
   const [ userInput, setUserInput ] = useState('');
   const [ userData, setUserData] = useState({});
 
-  useEffect( async () => {
+  useEffect(() => {
+    async function restoreData() {
     let permData;
     permData = await getData();
     setUserData(permData);
+    }
+
+    restoreData();
   }, [])
 
   const storedData = {
@@ -46,16 +50,13 @@ export default function App() {
 
   const getData = async () => {
     try {
-      const jsonValue = await AsyncStorage.getItem('@storage_Key')
-      return jsonValue != null ? JSON.parse(jsonValue) : null;
-    } catch (e) {
-
-      const seedData = {
+        const seedData = {
         messages: []
       }
-      const jsonValue = JSON.stringify(userData)
-      await AsyncStorage.setItem('@storage_Key', jsonValue)
-      return seedData;
+      const jsonValue = await AsyncStorage.getItem('@storage_Key')
+      if(jsonValue === null) return seedData;
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } catch (e) {
 
     }
   }
